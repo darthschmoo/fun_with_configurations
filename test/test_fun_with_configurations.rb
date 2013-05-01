@@ -190,4 +190,24 @@ class TestFunWithConfigurations < Test::Unit::TestCase
       assert_equal "definitely", @obj3.config.servers.puppymonster.services.oauth
     end
   end
+  
+  context "testing code writer" do
+    setup do
+      @obj = Object.new
+      
+      @obj.install_fwc_config do
+        scream 1,2,3,4,5
+        yell   [1,2,3,4,5]
+        whisper do
+          secret1 "80888"
+          secret2 "12345"
+          secret3 "99999"    # the most secret combination, cuz it's the last one anyone tries
+        end
+      end
+    end
+    
+    should "do stuff" do
+      assert_match /\[1, 2, 3, 4, 5\]/, @obj.config.to_ruby_code
+    end
+  end
 end
