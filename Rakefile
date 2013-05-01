@@ -17,11 +17,25 @@ Jeweler::Tasks.new do |gem|
   gem.name = "fun_with_configurations"
   gem.homepage = "http://github.com/darthschmoo/fun_with_configurations"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = "A quick and feisty configuration creator (e.g. MyClass.config)"
+  gem.description = <<-DESC
+Attach a configuration object to any object or class with code like this:
+   spy.install_fwc_config do
+     spy_id "74 Baker"
+DESC
   gem.email = "keeputahweird@gmail.com"
   gem.authors = ["Bryce Anderson"]
   # dependencies defined in Gemfile
+  
+  gem.files = Dir.glob( File.join( ".", "lib", "**", "*.rb" ) ) + 
+              Dir.glob( File.join( ".", "test", "**", "*.*" ) ) +
+              [ "Gemfile", 
+                "Rakefile", 
+                "LICENSE.txt", 
+                "README.rdoc",
+                "VERSION"
+              ]
+  
 end
 Jeweler::RubygemsDotOrgTasks.new
 
@@ -32,13 +46,13 @@ Rake::TestTask.new(:test) do |test|
   test.verbose = true
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |test|
-  test.libs << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-  test.rcov_opts << '--exclude "gems/*"'
-end
+# require 'rcov/rcovtask'
+# Rcov::RcovTask.new do |test|
+#   test.libs << 'test'
+#   test.pattern = 'test/**/test_*.rb'
+#   test.verbose = true
+#   test.rcov_opts << '--exclude "gems/*"'
+# end
 
 task :default => :test
 

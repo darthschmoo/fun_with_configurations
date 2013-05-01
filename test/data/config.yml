@@ -1,0 +1,12 @@
+servers: 
+  puppymonster:
+    commands:
+    - flippy
+    - snorty
+    - shorty
+  
+    services:
+      mysql:       yep
+      memcached:   sure
+      oauth:       definitely
+      twitter:     no
