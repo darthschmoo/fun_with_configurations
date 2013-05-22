@@ -92,43 +92,62 @@ module FunWith
       end
       
       def try( *keys )
-        t = TryObject.new( self )
-        
-        for key in keys
-          t[key]
+        (t = TryObject.new( self )).tap do
+          for key in keys
+            t[key]
+          end
         end
-        
-        t
       end
       
       def to_ruby_code( indent = 0 )
-        code = ""
-        if indent == 0
-          code << "FunWith::Configurations::Config.new do\n"
-          code << self.to_ruby_code( 2 )
-          code << "end\n"
-        else
-          for k, v in @config_vars
-            if v.is_a?( Config )
-              code << (" " * indent) + "#{k} do\n"
-              code << v.to_ruby_code( indent + 2 )
-              code << (" " * indent) + "end\n"
-            else
-              code << (" " * indent) + "#{k} #{v.inspect}\n"
+        (code = "").tap do
+          if indent == 0
+            code << "FunWith::Configurations::Config.new do\n"
+            code << self.to_ruby_code( 2 )
+            code << "end\n"
+          else
+            for k, v in @config_vars
+              if v.is_a?( Config )
+                code << (" " * indent) + "#{k} do\n"
+                code << v.to_ruby_code( indent + 2 )
+                code << (" " * indent) + "end\n"
+              else
+                code << (" " * indent) + "#{k} #{v.inspect}\n"
+              end
             end
           end
         end
-        
-        code
+      end
+      
+      def each( *args, &block )
+        @config_vars.each( *args, &block )
+      end
+      
+      def to_s( style = :hash )
+        case style
+        when :hash
+          self.to_hash.inspect
+        when :ruby
+          self.to_ruby_code
+        else
+          super
+        end
+      end
+      
+      def to_hash
+        (hash = {}).tap do
+          for k, v in @config_vars
+            hash[k] = v.is_a?(Config) ? v.to_hash : v
+          end
+        end
       end
       
       def self.from_hash( hash )
-        config = self.new 
-        
-        for k, v in hash
-          config.send( k, v.is_a?( Hash ) ? self.from_hash( v ) : v )
+        (config = self.new).tap do
+          for k, v in hash
+            config.send( k, v.is_a?( Hash ) ? self.from_hash( v ) : v )
+          end
         end
-        
         config
       end
       
