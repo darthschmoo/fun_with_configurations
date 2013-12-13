@@ -58,11 +58,37 @@ You can also load from a hash:
 
 Or from a yaml string:
 
-    @obj.install_fwc_config_from_yaml( YAML.load( File.read( "~/data/configs/circumstantial.yml" ) ) )
+    @obj.install_fwc_config_from_file( "~/data/configs/circumstantial.yml" )
 
 The file should represent hashes of hashes.  Anything not a hash will be treated as a leaf setting (arrays, etc.).
 
+Last and best, you can load a pure Ruby configuration:
 
+    @obj.install_fwc_config_from_file( "~/data/configs/rubicon.rb" )
+    
+    Contents of rubicon.rb would be similar to what appears in the install_fwc_config block:
+    
+        server do
+          thor do
+            ip "212.36.64.10"
+            role "mysql"
+          end
+          
+          loki do
+            ip "212.36.64.11"
+            role "web"
+          end
+          
+          odin do
+            ip "212.36.64.12"
+            role "bitcoin_mining"
+          end
+          
+          fenrir do
+            ip "212.36.64.13"
+            role "igniting_ragnarok"
+          end
+        end
 
 
 == Contributing to fun_with_configurations

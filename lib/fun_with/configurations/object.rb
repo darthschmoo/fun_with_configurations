@@ -18,14 +18,17 @@ class Object
     end
     
     self.fwc_configuration_file = file
+    self.config
   end
   
   def install_fwc_config_from_hash( hash )
-    install_fwc_config( FunWith::Configurations::Config.from_hash( hash ) )
+    self.install_fwc_config( FunWith::Configurations::Config.from_hash( hash ) )
+    self.config
   end
 
   def install_fwc_config_from_yaml( yaml_string )
-    install_fwc_config_from_hash( YAML.load( yaml_string ) )
+    self.install_fwc_config_from_hash( YAML.load( yaml_string ) )
+    self.config
   end
 end
 

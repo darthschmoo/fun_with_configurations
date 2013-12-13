@@ -19,7 +19,7 @@ class TestLoadingFromFile < FunWith::Configurations::TestCase
     assert_equal "not bloody likely", @srvman.config.servers.puppymonster.services.twitter
   end
 
-  should "load from a .yaml file" do
+  should "load from a .yml file" do
     @srvman.install_fwc_config_from_file( @config_root.join("config.yml") )
     assert_equal "no", @srvman.config.servers.puppymonster.services.twitter
   end
@@ -30,3 +30,5 @@ class TestLoadingFromFile < FunWith::Configurations::TestCase
     @config_root = FunWith::Configurations.root( "test", "data" )
   end
 end
+
+
