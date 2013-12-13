@@ -5,8 +5,19 @@ class Object
     self.config
   end
   
-  def install_fwc_config_from_file( filename )
-    install_fwc_config( eval( File.read( filename ) ) )  # TODO: Has to be a better way than eval().  Dangerous.
+  def install_fwc_config_from_file( file )
+    file = file.fwf_filepath
+    
+    case file.ext
+    when "rb"
+      self.install_fwc_config do
+        eval( file.read )
+      end
+    when "yml", "yaml"
+      self.install_fwc_config_from_yaml( file.read )
+    end
+    
+    self.fwc_configuration_file = file
   end
   
   def install_fwc_config_from_hash( hash )
@@ -17,3 +28,4 @@ class Object
     install_fwc_config_from_hash( YAML.load( yaml_string ) )
   end
 end
+

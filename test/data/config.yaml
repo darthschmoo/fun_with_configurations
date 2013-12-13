@@ -1,0 +1,12 @@
+servers: 
+  puppymonster:
+    commands:
+    - flicker
+    - snortular
+    - shortify
+  
+    services:
+      mysql:       nope
+      memcached:   sure
+      oauth:       definitely
+      twitter:     not bloody likely

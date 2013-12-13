@@ -16,3 +16,6 @@ require 'fun_with_configurations'
 
 class Test::Unit::TestCase
 end
+
+class FunWith::Configurations::TestCase < Test::Unit::TestCase
+end

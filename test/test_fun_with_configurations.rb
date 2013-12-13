@@ -1,6 +1,6 @@
 require 'helper'
 
-class TestFunWithConfigurations < Test::Unit::TestCase
+class TestFunWithConfigurations < FunWith::Configurations::TestCase
   should "configurize a class" do
     o = Object.new
     o.install_fwc_config do

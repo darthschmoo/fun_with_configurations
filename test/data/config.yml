@@ -1,3 +1,6 @@
+# A configuration can be represented as a YAML hash,
+# though pure ruby offers more flexibility.
+
 servers: 
   puppymonster:
     commands:
@@ -9,4 +12,4 @@ servers:
       mysql:       yep
       memcached:   sure
       oauth:       definitely
-      twitter:     no
+      twitter:     "no"               # Weird thing: YAML interprets unquoted 'no' as false.  Interesting design choice.

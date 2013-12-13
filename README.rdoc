@@ -4,63 +4,61 @@ Configuration and settings are the beating heart and dark, twisted soul of your 
 
 Let's do some example code:
 
-"""class Computer; end;
+    class Computer; end;
 
-Computers.install_fwc_config do
-  servers do
-    hopeful_host do
-      ip "192.168.0.25"
-      services :mysql, :memcached, :email, :backup
-      uptime `uptime`.strip
-      config_script "/var/configurations/hopeful.conf"
-    end
+    Computers.install_fwc_config do
+      servers do
+        hopeful_host do
+          ip "192.168.0.25"
+          services :mysql, :memcached, :email, :backup
+          uptime `uptime`.strip
+          config_script "/var/configurations/hopeful.conf"
+        end
 
-    squishy_host do
-      ip "192.168.0.27"
-      services :postresql, :couchdb
-      uptime `uptime`.strip
-      config_script "/var/configurations/squishy.conf"
-    end
-  end
+        squishy_host do
+          ip "192.168.0.27"
+          services :postresql, :couchdb
+          uptime `uptime`.strip
+          config_script "/var/configurations/squishy.conf"
+        end
+      end
   
-  workstations do
-    betty do
-      ip "192.168.0.14"
-      os "Ubuntu Linux 13.04"
-    end
+      workstations do
+        betty do
+          ip "192.168.0.14"
+          os "Ubuntu Linux 13.04"
+        end
     
-    veronica do
-      ip "192.168.0.15"
-      os "Solaris 10"
+        veronica do
+          ip "192.168.0.15"
+          os "Solaris 10"
+        end
+      end
     end
-  end
-end
 
-Computers.config.servers.hopeful_host.ip  # "192.168.0.25"
-Computers.config.workstations.betty.ip    # "192.168.0.14"
-Computers.config.try.servers.grumpy_host.ip.success?    # false  (doesn't have that configuration setting)
-"""
+    Computers.config.servers.hopeful_host.ip  # "192.168.0.25"
+    Computers.config.workstations.betty.ip    # "192.168.0.14"
+    Computers.config.try.servers.grumpy_host.ip.success?    # false  (doesn't have that configuration setting)
 
 You can also load from a hash:
 
-"""@obj.install_fwc_config_from_hash({
-  servers: {
-    hopeful_host: {
-      ip: "192.168.0.25",
-      services :mysql, :memcached, :email, :backup
+    @obj.install_fwc_config_from_hash({
+      servers: {
+        hopeful_host: {
+          ip: "192.168.0.25",
+          services :mysql, :memcached, :email, :backup
       
-      ...  (and so on)
-    }
-  }
-})
+          ...  (and so on)
+        }
+      }
+    })
 
-@obj.config.servers.hopeful_host.services    # [:mysql, :memcached, :email, :backup]
-"""
+    @obj.config.servers.hopeful_host.services    # [:mysql, :memcached, :email, :backup]
+
 
 Or from a yaml string:
 
-"""@obj.install_fwc_config_from_yaml( YAML.load( File.read( "~/data/configs/circumstantial.yml" ) ) )
-"""
+    @obj.install_fwc_config_from_yaml( YAML.load( File.read( "~/data/configs/circumstantial.yml" ) ) )
 
 The file should represent hashes of hashes.  Anything not a hash will be treated as a leaf setting (arrays, etc.).
 
