@@ -2,6 +2,7 @@ class Object
   def install_fwc_config( config = nil, &block )
     extend FunWith::Configurations::Configurable
     self.config = config || FunWith::Configurations::Config.new( nil, &block )
+    self.config.fwc_configured_object = self
     self.config
   end
   
@@ -27,7 +28,7 @@ class Object
   end
 
   def install_fwc_config_from_yaml( yaml_string )
-    self.install_fwc_config_from_hash( YAML.load( yaml_string ) )
+    self.install_fwc_config_from_hash( Psych.load( yaml_string ) )
     self.config
   end
 end

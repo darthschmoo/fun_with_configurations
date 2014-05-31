@@ -1,6 +1,9 @@
+# methods available to a configuration-having object.
+
 module FunWith
   module Configurations
     module Configurable
+      # Replaces existing configuration
       def config=( config )
         @fwc_config = config
       end

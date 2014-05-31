@@ -1,29 +1,5 @@
 module FunWith
   module Configurations
-    class KeyError < Exception
-    end
-    
-    class ChainError < Exception
-    end
-    
-    module ConfigOverriddenMethods
-      def self.override_method( sym )
-        eval <<-EOS
-          def #{sym}( *args, &block )
-            self.method_missing(:sym, *args, &block)
-          end
-          
-          def #{sym}=( *args, &block )
-            self.method_missing( :#{sym}, *args, &block )
-          end
-        EOS
-      end
-      
-      for sym in [:test]
-        override_method( sym )
-      end
-    end
-    
     class Config
       include ConfigOverriddenMethods
       
@@ -129,6 +105,8 @@ module FunWith
           self.to_hash.inspect
         when :ruby
           self.to_ruby_code
+        when :yaml
+          Psych.dump( self.to_hash )
         else
           super
         end
@@ -157,6 +135,89 @@ module FunWith
       
       def fwc_overridden_methods
         self.class.fwc_overridden_methods
+      end
+      
+      # Assigns the topmost set of configuration symbols as instance variables.
+      # Translates any subconfigurations into a hash.
+      # 
+      # Example:
+      #
+      # config.set.subset.subsubset.fwc_assign!( obj )
+      # 
+      # Say that the referenced config had keys :name, :height, :gravatar, :public_key,
+      # then the object would be assigned the corresponding instance_vars, @name, @height, etc.
+      def fwc_assign!( obj = self.fwc_configured_object )
+        for k, v in self
+          obj.instance_variable_set( "@#{k}", v.is_a?( Config ) ? v.to_hash : v )
+        end
+        
+        obj
+      end
+      
+      # returns the topmost configuration, obviously
+      def fwc_root
+        root = self
+        
+        while true
+          if root.fwc_parent.is_a?(Config)
+            root = root.fwc_parent
+          else
+            return root
+          end
+        end
+      end
+      
+      def fwc_root?
+        self == self.fwc_root
+      end
+      
+      def fwc_parent
+        @parent
+      end
+      
+      # Every subtree / subconfig in the config hierarchy will share the same configured object.
+      def fwc_configured_object
+        if self.fwc_root?
+          @configured_object
+        else
+          self.fwc_root.fwc_configured_object
+        end
+      end
+      
+      # used for assigning the configured
+      def fwc_configured_object=( obj )
+        if self.fwc_root?
+          @configured_object = obj
+        else
+          self.fwc_root.fwc_configured_object = obj
+        end
+      end
+      
+      
+      
+      # Useful when assigning selective settings from a config tree.  Example:
+      #
+      # RailsSite.config.constant_contact.fwc do |config|
+      #   @key      = config.oauth.key
+      #   @secret   = config.oauth.secret
+      #   @redir    = config.oauth.redirect_url
+      #   @user     = config.user
+      #   @password = config.password
+      # end
+      #     
+      def fwc( &block )
+        yield self if block_given?
+        self
+      end
+      
+      
+      def fwc_save( file = nil )
+        raise "NOT TESTED!"
+        
+        root = self.fwc_root
+        file = (file || root.fwc_configuration_file).fwf_filepath
+        
+        file.write( root.to_s )
       end
     end
   end

@@ -2,11 +2,11 @@
 
 Configuration and settings are the beating heart and dark, twisted soul of your operation.
 
-Let's do some example code:
+Let's look at some example code:
 
     class Computer; end;
 
-    Computers.install_fwc_config do
+    Computer.install_fwc_config do
       servers do
         hopeful_host do
           ip "192.168.0.25"
@@ -46,7 +46,7 @@ You can also load from a hash:
       servers: {
         hopeful_host: {
           ip: "192.168.0.25",
-          services :mysql, :memcached, :email, :backup
+          services :mysql, :memcached, :email, :backup   # stores args as an array
       
           ...  (and so on)
         }
@@ -58,7 +58,7 @@ You can also load from a hash:
 
 Or from a yaml string:
 
-    @obj.install_fwc_config_from_file( "~/data/configs/circumstantial.yml" )
+    @obj.install_fwc_config_from_file( "~/data/configs/circumstantial.yml" )   # looks for .yml or .yaml as the file extension
 
 The file should represent hashes of hashes.  Anything not a hash will be treated as a leaf setting (arrays, etc.).
 
@@ -66,29 +66,100 @@ Last and best, you can load a pure Ruby configuration:
 
     @obj.install_fwc_config_from_file( "~/data/configs/rubicon.rb" )
     
-    Contents of rubicon.rb would be similar to what appears in the install_fwc_config block:
+Contents of rubicon.rb would be similar to what appears in the install_fwc_config block:
+
+    server do
+      thor do
+        ip "212.36.64.10"
+        role "mysql"
+      end
+      
+      loki do
+        ip "212.36.64.11"
+        role "web"
+      end
+      
+      odin do
+        ip "212.36.64.12"
+        role "bitcoin_mining"
+      end
+      
+      fenrir do
+        ip "212.36.64.13"
+        role "igniting_ragnarok"
+      end
+    end
+
+
+== Other features
+
+There are a couple of affordances for assigning variables to an object from a config.  The first is fwc_assign!(), which takes an object and assigns its instance_vars.  More code!
+
+    require "fun_with_configurations"
+    class Person
+      attr_accessor :ssn, :birthdate, :password
+    end
     
-        server do
-          thor do
-            ip "212.36.64.10"
-            role "mysql"
-          end
-          
-          loki do
-            ip "212.36.64.11"
-            role "web"
-          end
-          
-          odin do
-            ip "212.36.64.12"
-            role "bitcoin_mining"
-          end
-          
-          fenrir do
-            ip "212.36.64.13"
-            role "igniting_ragnarok"
-          end
+    p = Person.new
+    p.install_fwc_config do
+      age 51
+      
+      data do
+        personal do
+          ssn "555-555-5555"
+          birthdate "2001-03-01"
+          password  "mice"
         end
+      end
+    end
+    
+    p.config.data.personal.fwc_assign!
+    
+    p.ssn   # => "555-555-5555"
+    p.birthdate   # => "2001-03-01"
+    (and so on)    
+
+By default, fwc_assign!() assigns the instance variables of the config's object (the object you call object.config on).  But you can also pass fwc_assign a different object to config instead.
+
+    class Computer; end
+    
+    Computer.install_fwc_config_from_file( file )
+    
+    
+    betty = Computer.config.betty.fwc_assign!( Computer.new )
+    veronica = Computer.config.veronica.fwc_assign!( Computer.new )
+    odin = Computer.config.odin.fwc_assign!( Computer.new )
+    
+    computers = {}
+    
+    # Alternately
+    Computer.config.fwc do |c|    # You'll meet .fwc() soon
+      c.each do |k, config|
+        computers[k] = config.fwc_assign!( Computer.new )
+      end
+    end
+    
+    odin.ip # "192.168.0.15"
+
+
+Another convenience method lets
+
+    MyRails.config.constant_contact.fwc do |config|
+      @key      = config.oauth.key
+      @secret   = config.oauth.secret
+      @redir    = config.oauth.redirect_url
+      @user     = config.user
+      @password = config.password
+    end
+    
+Basically, this is meant to spare you from typing the longhand form:
+
+    @key      = MyRails.config.constant_contact.oauth.key
+    @secret   = MyRails.config.constant_contact.oauth.secret
+    @redir    = MyRails.config.constant_contact.oauth.redirect_url
+    @user     = MyRails.config.constant_contact.user
+    @password = MyRails.config.constant_contact.password 
+
 
 
 == Contributing to fun_with_configurations
