@@ -14,4 +14,4 @@ group :development do
   gem "fun_with_testing", "~> 0.0"
 end
 
-gem "fun_with_gems", "~> 0.0"
+gem "fun_with_gems", "~> 0.0", ">= 0.0.2"
