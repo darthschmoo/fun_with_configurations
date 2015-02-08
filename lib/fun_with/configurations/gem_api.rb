@@ -1,6 +1,6 @@
 module FunWith
   module Configurations
-    module ModuleIncludes
+    module GemAPI
       def configure( object, config = nil, &block )
         if block_given?
           object.install_fwc_config( config, &block )          
@@ -20,6 +20,7 @@ module FunWith
         end
       end
       
+      # 
       protected
       def configuration_argument_type?( arg )
         case arg

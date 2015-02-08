@@ -60,13 +60,6 @@ module FunWith
         end
       end
       
-      def self.key_check( sym )
-        @reserved_symbols ||= Config.instance_methods - self.fwc_overridden_methods
-        
-        raise KeyError.new("#{sym} is not a symbol") unless sym.is_a?(Symbol)
-        raise KeyError.new("#{sym} is reserved for use by Hash") if @reserved_symbols.include?( sym )
-      end
-      
       def try( *keys )
         (t = TryObject.new( self )).tap do
           for key in keys
@@ -118,19 +111,6 @@ module FunWith
             hash[k] = v.is_a?(Config) ? v.to_hash : v
           end
         end
-      end
-      
-      def self.from_hash( hash )
-        (config = self.new).tap do
-          for k, v in hash
-            config.send( k, v.is_a?( Hash ) ? self.from_hash( v ) : v )
-          end
-        end
-        config
-      end
-      
-      def self.fwc_overridden_methods
-        ConfigOverriddenMethods.instance_methods.grep( /[^=]$/ )
       end
       
       def fwc_overridden_methods

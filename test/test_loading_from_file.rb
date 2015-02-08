@@ -1,10 +1,6 @@
 require 'helper'
 
-module FunWith
-  module Configurations
-    class ServerManager
-    end
-  end
+class FunWith::Configurations::ServerManager
 end
 
 class TestLoadingFromFile < FunWith::Configurations::TestCase

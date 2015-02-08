@@ -162,6 +162,34 @@ Basically, this is meant to spare you from typing the longhand form:
 
 
 
+
+
+== FunWith::Patterns::Loader integration
+
+To use configurations with the Loader pattern:
+
+    require 'fun_with_configurations'
+    require 'fun_with_patterns'
+
+    class Computer
+      attr_accessor :label
+      
+      # Look up individual configurations via Computer[:bob_system]
+      loader_pattern_configure( :bracketwise_lookup,
+                                :warn_on_key_change,  # Warn if an existing lookup key is overwritten
+                                { :key   => :label,     # Key is found by calling method label()
+                                  :style => FunWith::Configurations::LoadingStyle } ) # Interprets the file as a FWC::Config
+    end
+
+    Computer.loader_pattern_load_from_dir( "~/.config/computers" )  # loads all the configurations in the directory
+    puts Computer[:bob_system].memory  # ==> "4GB"
+
+Internally, the LoadingStyle simply offloads the loading work to Config.from_file(), so any valid configuration format will do (.rb, .yaml).
+
+
+    
+
+
 == Contributing to fun_with_configurations
 
 [Boilerplate from Jeweler.  Seems reasonable.]
