@@ -11,7 +11,8 @@ group :development do
   # gem "bundler", "~> 1.5"
   # gem "jeweler", "~> 2.0"
   # gem "debugger"
-  gem "fun_with_testing", "~> 0.0"
+  gem "fun_with_testing", "~> 0.0", ">= 0.0.8"
 end
 
-gem "fun_with_gems", "~> 0.0", ">= 0.0.2"
+gem "fun_with_files", "~> 0.0", ">= 0.0.17"
+gem "fun_with_gems", "~> 0.0", ">= 0.0.6"

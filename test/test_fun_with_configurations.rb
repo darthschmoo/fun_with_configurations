@@ -72,8 +72,8 @@ class TestFunWithConfigurations < FunWith::Configurations::TestCase
     
     should "handle equal-style assignment niftily" do
       @obj.config.c = :d
-      assert_equal :d, @obj.config[:c]
-      assert_equal nil, @obj.config[:c=]
+      assert_equal  :d, @obj.config[:c]
+      assert_nil   nil, @obj.config[:c=]
     end
     
     should "gripe when given a hash" do
@@ -207,7 +207,7 @@ class TestFunWithConfigurations < FunWith::Configurations::TestCase
     end
     
     should "do stuff" do
-      assert_match /\[1, 2, 3, 4, 5\]/, @obj.config.to_ruby_code
+      assert_match( /\[1, 2, 3, 4, 5\]/, @obj.config.to_ruby_code )
     end
   end
 end
