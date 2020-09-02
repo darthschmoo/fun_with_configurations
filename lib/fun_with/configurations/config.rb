@@ -7,12 +7,21 @@ module FunWith
         @key_to_self = key_to_self
         @parent      = parent
         @config_vars = {}
+        
+        @comment_buffer = []     # in lieu of actual comments, type ! "key to send with each call to the Mailchimp API" )
+        @comments       = {}
+        
         self.instance_exec( &block ) if block_given?
       end
     
       def method_missing( method, *args, &block )
         method = method.to_s.gsub( /=$/, '' ).to_sym
         
+        if block_given? || args.length > 0
+          @comments[method] = @comment_buffer
+          @comment_buffer   = []
+        end
+                
         if block_given?
           self[method] = Config.new(method, self) unless self[method].is_a?(Config)
           self[method].instance_exec( &block )
@@ -68,24 +77,8 @@ module FunWith
         end
       end
       
-      def to_ruby_code( indent = 0 )
-        (code = "").tap do
-          if indent == 0
-            code << "FunWith::Configurations::Config.new do\n"
-            code << self.to_ruby_code( 2 )
-            code << "end\n"
-          else
-            for k, v in @config_vars
-              if v.is_a?( Config )
-                code << (" " * indent) + "#{k} do\n"
-                code << v.to_ruby_code( indent + 2 )
-                code << (" " * indent) + "end\n"
-              else
-                code << (" " * indent) + "#{k} #{v.inspect}\n"
-              end
-            end
-          end
-        end
+      def to_ruby_code
+        FunWith::Configurations::RubyCodePrinter.new.to_ruby_code( self )
       end
       
       def each( *args, &block )
@@ -190,6 +183,10 @@ module FunWith
         self
       end
       
+      def fwc_keys
+        @config_vars.keys
+      end
+      
       
       def fwc_save( file = nil )
         raise "NOT TESTED!"
@@ -198,6 +195,59 @@ module FunWith
         file = (file || root.fwc_configuration_file).fwf_filepath
         
         file.write( root.to_s )
+      end
+      
+      def fwc_comment( str )
+        @comment_buffer << str
+      end
+      
+      def fwc_comments_hash
+        @comments
+      end
+      
+      
+      # Overlay a config atop another, overwriting existing values with
+      # new values when there's a conflict.  Good for making defaults
+      # and overrides.
+      #
+      # default_settings do
+      #   dark_mode :on
+      #   theme     :gravity
+      #   privacy do
+      #     default_post_setting :public
+      #   end
+      # end
+      #
+      # user_settings do
+      #   dark_mode :off
+      #   privacy do
+      #     default_post_setting :friends
+      #   end
+      # end
+      #
+      # settings = default_settings + user_settings
+      #
+      # 
+      
+      def +( rhs )
+        combined = self.class.new
+        
+        for key in (self.fwc_keys + rhs.fwc_keys).uniq
+          if self.fwc_keys.include?( key ) && rhs.fwc_keys.include?( key )
+            self_val = self[key]
+            rhs_val = rhs[key]
+            
+            if self_val.is_a?( self.class ) && rhs_val.is_a?( self.class )
+              combined[key] = self_val + rhs_val
+            else
+              combined[key] = rhs_val     # 
+            end
+          else
+            combined[key] = (self[key] || rhs[key]).clone
+          end
+        end
+        
+        combined
       end
     end
   end

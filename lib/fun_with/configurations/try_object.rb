@@ -1,5 +1,6 @@
 module FunWith
   module Configurations
+    
     class TryObject
       # takes a Config object
       def initialize( config )

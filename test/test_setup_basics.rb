@@ -6,6 +6,11 @@ class TestSetupBasics < FunWith::Configurations::TestCase
       should "respond to :configure" do
         assert FunWith::Configurations.respond_to?(:configure)
       end
+      
+      should "have the FunWith::Configurations namespace included in testing land" do
+        assert defined?( Config )
+        assert defined?( ChainError )
+      end
     end
   end
 end

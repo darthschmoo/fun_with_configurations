@@ -14,5 +14,5 @@ group :development do
   gem "fun_with_testing", "~> 0.0", ">= 0.0.8"
 end
 
-gem "fun_with_files", "~> 0.0", ">= 0.0.17"
+gem "fun_with_files", "~> 0.0", ">= 0.0.17"     # should be brought in by fun_with_gems
 gem "fun_with_gems", "~> 0.0", ">= 0.0.6"

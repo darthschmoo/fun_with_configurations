@@ -8,6 +8,9 @@ class TestLoadingFromFile < FunWith::Configurations::TestCase
     @srvman.install_fwc_config_from_file( @config_root.join("config.rb") )
     assert @srvman.respond_to?(:config)
     assert_equal "192.168.0.27", @srvman.config.servers.squishy_host.ip
+    
+    puts "\n\n"
+    puts @srvman.config.to_ruby_code
   end
   
   should "load from a .yaml file" do

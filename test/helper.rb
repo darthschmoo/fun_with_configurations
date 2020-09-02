@@ -21,4 +21,10 @@ require 'fun_with_configurations'
 # end
 
 class FunWith::Configurations::TestCase < FunWith::Testing::TestCase
+  include FunWith::Configurations
+  FWC = FunWith::Configurations
+  
+  def add_a_configuration_to( obj )
+    FWC.configure( obj, FunWith::Configurations.root( "test", "data", "config.rb" ) )
+  end
 end
